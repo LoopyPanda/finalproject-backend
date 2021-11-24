@@ -1,0 +1,70 @@
+{
+    "data": [
+        {
+            "product_id": 4,
+            "name": "Desert",
+            "price": 225,
+            "stock": 4,
+            "picture": {
+                "main-image":"someImageAsURL",
+                "small-image1":  "someImageAsURL",
+                "small-image2":  "someImageAsURL"
+            },
+            "description": "sometext",
+            "category":[
+            {
+                "id": 111,
+                "name": "celender",
+                "thumbnail": "url",
+                "price": 458
+            },
+            {
+                "id": 111,
+                "name": "postcard",
+                "thumbnail": "url",
+                "price": 147
+            }
+            ]
+        },
+        {
+            "product_id": 7,
+            "name": "birds",
+            "price": 487,
+            "stock": 7,
+            "picture": {
+                "main-image":"someImageAsURL",
+                "small-image1":  "someImageAsURL",
+                "small-image2":  "someImageAsURL"
+            },
+            "description": "sometext",
+            "category":[
+            {
+                "id": 485,
+                "name": "artprints",
+                "thumbnail": "url",
+                "price": 879
+            }
+            ]
+        },
+        {
+            "product_id": 14,
+            "name": "northenlights",
+            "price": 487,
+            "stock": 3,
+            "picture": {
+                "main-image":"someImageAsURL",
+                "small-image1":  "someImageAsURL",
+                "small-image2":  "someImageAsURL"
+            },
+            "description": "sometext",
+            "category":[
+            {
+                "id": 485,
+                "name": "artprints",
+                "thumbnail": "url",
+                "price": 550
+            }
+            ]
+        }
+    ]
+}
