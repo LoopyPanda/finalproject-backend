@@ -51,3 +51,33 @@ FROM "Categories" c
 JOIN "Category_has_products" cp ON cp.category_id = c.category_id
 JOIN "Products" p ON cp.product_id = p.product_id
 GROUP BY c.name, c.description, c.thumbnail, c.price;
+
+SELECT * FROM "Products" p JOIN "Images" i ON p.product_id = i.product_id;
+
+SELECT
+p.name,
+p.description,
+p.stock,
+ARRAY_AGG(JSON_BUILD_OBJECT('category_name', c.name, 'category_picture', c.thumbnail, 'category_description', c.description, 'category_price', c.price)) AS categories
+FROM "Products" p
+JOIN "Category_has_products" cp
+ON cp.product_id = p.product_id
+JOIN "Categories" c
+ON cp.category_id = c.category_id
+WHERE p.product_id=1
+GROUP BY p.name, p.description, p.stock;
+
+-- give product to each categories
+INSERT INTO Category_has_products(category_id, product_id)
+VALUES (1, 2);
+
+-- insert categories
+INSERT INTO "Categories" (name, description, thumbnail, price)
+VALUES ('postcards', 'Your favorite canvas/digital art printed on a postcard','http://lorempixel.com/400/200/', 200);
+
+
+INSERT INTO "Images" (product_id, url)
+VALUES (3 ,'https://bit.ly/3FMp8T0');
+
+SELECT * FROM "Products" p JOIN "Images" i ON p.product_id = i.product_id;
+SELECT * FROM "Images" p JOIN "Images" i ON p.product_id = i.product_id;

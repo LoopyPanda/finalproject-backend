@@ -8,8 +8,10 @@ const {
 } = require("../controllers/productsController/get_controller")
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+productsRouter.get('/', function(req, res, next) {
+  res.render('index', { title: 'Welcome to the ABskla' });
 });
+
+productsRouter.get('/product/:id', get_one_product_by_id);
 
 module.exports = productsRouter;
