@@ -75,9 +75,9 @@ VALUES (1, 2);
 INSERT INTO "Categories" (name, description, thumbnail, price)
 VALUES ('postcards', 'Your favorite canvas/digital art printed on a postcard','http://lorempixel.com/400/200/', 200);
 
-
+-- Insert image according to product
 INSERT INTO "Images" (product_id, url)
 VALUES (3 ,'https://bit.ly/3FMp8T0');
 
+-- join products and images table
 SELECT * FROM "Products" p JOIN "Images" i ON p.product_id = i.product_id;
-SELECT * FROM "Images" p JOIN "Images" i ON p.product_id = i.product_id;
