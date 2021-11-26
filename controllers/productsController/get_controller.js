@@ -2,46 +2,59 @@ const axios = require("axios");
 const db = require("../../db/client");
 
 const get_one_product_by_id = async (req, res, next) => {
-    const { id } = req.params;
+const { id } = req.params;
 
-    const getProductQuery = {
-        text: `
-        SELECT
+const getOneProductQuery = {
+    text: `
+            SELECT
             p.name,
             p.description,
             p.stock,
-            ARRAY_AGG(JSON_BUILD_OBJECT('link', i.url)) AS pictures,
-            ARRAY_AGG(JSON_BUILD_OBJECT('category_name', c.name, 'category_picture', c.thumbnail, 'category_description', c.description, 'category_price', c.price)) AS categories
-        FROM
+            JSON_AGG(JSON_BUILD_OBJECT('category_name', c.name, 'category_picture', c.thumbnail, 'category_description', c.description, 'category_price', c.price)) AS categories
+            FROM
             "Products" p
-        JOIN "Category_has_products" cp
+            JOIN "Category_has_products" cp
             ON cp.product_id = p.product_id
-        JOIN "Categories" c
+            JOIN "Categories" c
             ON cp.category_id = c.category_id
-        JOIN "Images" i
-            ON i.product_id = p.product_id
-        WHERE p.product_id=$1
-        GROUP BY p.name, p.description, p.stock`,
-        values: [id]
-    }
+            WHERE p.product_id=$1
+            GROUP BY p.name, p.description, p.stock
+            `,
+    values: [id],
+};
 
-    try {
+const getPicturesQuery = {
+    text: `
+            SELECT i.url
+            FROM "Images" i
+            WHERE i.product_id=$1
+        `,
+    values: [id],
+};
 
-        const {rows} = await db.query(getProductQuery)
-        console.log(rows)
-        if(!rows.length)
-            return res.status(404).send("Oops !! Look like there no product of this ID");
-    
-        // console.log(result);
-        res.status(200).send(rows[0]);
+try {
+    const { rows: productRows } = await db.query(getOneProductQuery);
 
-    } catch (e) {
-        console.log(e.message);
-        res.status(500).send(e.message);
-        next(e);
-    }
+    if (!productRows.length)
+    return res
+        .status(404)
+        .send("Oops !! Look like there no product of this ID");
+
+    const { rows: pictureRows } = await db.query(getPicturesQuery);
+
+    const result = {
+    ...productRows["0"],
+    pictures: pictureRows,
+    };
+
+    res.json(result);
+}   catch (e) {
+    console.log(e.message);
+    res.status(500).send(e.message);
+    next(e);
+}
 };
 
 module.exports = {
-    get_one_product_by_id
+get_one_product_by_id,
 };
