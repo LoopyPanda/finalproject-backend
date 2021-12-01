@@ -5,7 +5,9 @@ const productsRouter = express.Router();
 // controllers imports
 const {
   get_one_product_by_id,
-  get_insta_pictures
+  get_insta_pictures,
+  get_picture_by_category,
+  get_category_picture
 } = require("../controllers/productsController/get_controller")
 
 /* GET home page. */
@@ -14,8 +16,9 @@ productsRouter.get('/', function(req, res, next) {
 });
 
 productsRouter.get('/insta-pictures', get_insta_pictures);
+productsRouter.get('/category-pictures/:id', get_category_picture );
+productsRouter.get('/category-pictures/:id', get_picture_by_category );
 productsRouter.get('/:id', get_one_product_by_id);
-// productsRouter.get('/products', get_products_by_categories);
 
 
 
