@@ -7,7 +7,8 @@ const {
   get_one_product_by_id,
   get_insta_pictures,
   get_picture_by_category,
-  get_category_picture
+  get_category_picture,
+  get_random_picture
 } = require("../controllers/productsController/get_controller")
 
 /* GET home page. */
@@ -18,6 +19,7 @@ productsRouter.get('/', function(req, res, next) {
 productsRouter.get('/insta-pictures', get_insta_pictures);
 productsRouter.get('/category-pictures/:id', get_category_picture );
 productsRouter.get('/category-pictures/:id', get_picture_by_category );
+productsRouter.get('/random-pictures',  get_random_picture );
 productsRouter.get('/:id', get_one_product_by_id);
 
 

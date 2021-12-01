@@ -89,8 +89,8 @@ const get_insta_pictures = async (req, res, next) => {
 };
 // SELECT * FROM "Category_has_products" WHERE category_id=$1
 const get_picture_by_category = async (req, res, next) => {
-    const {id} = req.params;
-// console.log(req.params)
+    const { id } = req.params;
+    // console.log(req.params)
     const getPicturesQueryByCategory = {
         text: `SELECT c.name As category_name,
         c.description As category_description,
@@ -120,33 +120,68 @@ const get_picture_by_category = async (req, res, next) => {
 
 };
 
-const  get_category_picture = async (req, res, next) => {
-    const {id} = req.params;
-// console.log(id)
-        const getcategorypicture = {
-            text: `SELECT * From "Categories" WHERE category_id=$1`,
-            values: [id],
-        };
-        try {
-            const { rows: productRows } = await db.query(getcategorypicture);
-    
-            if (!productRows.length)
-                return res
-                    .status(404)
-                    .send("Oops !! Look like there no product of this Category");
-            res.status(200).send(productRows);
-        } catch (e) {
-            console.log(e.message);
-            res.status(500).send(e.message);
-            next(e);
-        }
-    
+const get_category_picture = async (req, res, next) => {
+    const { id } = req.params;
+    // console.log(id)
+    const getcategorypicture = {
+        text: `SELECT * From "Categories" WHERE category_id=$1`,
+        values: [id],
+    };
+    try {
+        const { rows: productRows } = await db.query(getcategorypicture);
+
+        if (!productRows.length)
+            return res
+                .status(404)
+                .send("Oops !! Look like there no product of this Category");
+        res.status(200).send(productRows);
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send(e.message);
+        next(e);
+    }
+
 };
 
+const get_random_picture = async (req, res, next) => {
+    // const {id} = req.params;
+    // console.log(id)
+    const getrandompicture = {
+        text: `SELECT url FROM "Images"`,
+    };
+    try {
+
+        const { rows: productRows } = await db.query(getrandompicture);
+        // console.log(productRows)
+
+        function randomimage() {
+            var imagesArr = [];
+            for (var i = 0; i < 4; i++) {
+                const random = productRows[Math.floor(Math.random() * 14)];
+                imagesArr.push(random);
+            }
+            return imagesArr
+        }
+        // console.log(randomimage());
+        const result = randomimage()
+        
+        if (!productRows.length)
+            return res
+                .status(404)
+                .send("Oops !! Look like there no product of this Category");
+        res.status(200).send(result);
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send(e.message);
+        next(e);
+    }
+
+};
 
 module.exports = {
     get_one_product_by_id,
     get_insta_pictures,
     get_picture_by_category,
-    get_category_picture
+    get_category_picture,
+    get_random_picture
 };
