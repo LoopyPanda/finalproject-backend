@@ -23,5 +23,4 @@ productsRouter.get('/random-pictures',  get_random_picture );
 productsRouter.get('/:id', get_one_product_by_id);
 
 
-
 module.exports = productsRouter;

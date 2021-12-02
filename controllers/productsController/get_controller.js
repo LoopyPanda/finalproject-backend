@@ -90,15 +90,16 @@ const get_insta_pictures = async (req, res, next) => {
 // SELECT * FROM "Category_has_products" WHERE category_id=$1
 const get_picture_by_category = async (req, res, next) => {
     const { id } = req.params;
-//   console.log(req.params)
+    //   console.log(req.params)
     const getPicturesByCategory = {
         text: `SELECT c.name As category_name,
         c.price As category_price,
-        ARRAY_AGG(JSON_BUILD_OBJECT('name', p.name))
+        ARRAY_AGG(JSON_BUILD_OBJECT('url', i.url))
         FROM "Categories" c
         JOIN "Category_has_products" cp ON cp.category_id = c.category_id
         JOIN "Products" p ON cp.product_id = p.product_id
         JOIN "Images" i ON p.product_id = i.product_id
+        WHERE c.category_id=$1
         GROUP BY c.name,c.price;
         `,
         values: [id],
@@ -120,7 +121,7 @@ const get_picture_by_category = async (req, res, next) => {
 };
 
 const get_category_picture = async (req, res, next) => {
-    
+
     // console.log(id)
     const getcategorypicture = {
         text: `SELECT * From "Categories"`,
@@ -142,31 +143,44 @@ const get_category_picture = async (req, res, next) => {
 };
 
 const get_random_picture = async (req, res, next) => {
-    // const {id} = req.params;
-    // console.log(id)
+
     const getrandompicture = {
-        text: `SELECT url FROM "Images"`,
+        text: `
+        SELECT i.product_id AS id,
+        ARRAY_AGG(JSON_BUILD_OBJECT('url', i.url)) as pictures
+        FROM "Images" i
+        GROUP BY i.product_id
+        `,
     };
     try {
 
         const { rows: productRows } = await db.query(getrandompicture);
-        // console.log(productRows)
 
-        function randomimage() {
-            var imagesArr = [];
-            for (var i = 0; i < 4; i++) {
-                const random = productRows[Math.floor(Math.random() * 14)];
+        if (!productRows.length)
+            return res
+
+
+                .status(404)
+                .send("Oops !! Look like there no product of this Category");
+
+        const randomImage = () => {
+            const imagesArr = [];
+            for (let i = 0; i < 4; i++) {
+                const random = productRows[Math.floor(Math.random() * productRows.length)];
                 imagesArr.push(random);
             }
             return imagesArr
         }
-        // console.log(randomimage());
-        const result = randomimage()
-        
-        if (!productRows.length)
-            return res
-                .status(404)
-                .send("Oops !! Look like there no product of this Category");
+
+        const randomImages = randomImage()
+
+        const result = randomImages.map(item => {
+            return {
+                id: item.id,
+                url: item.pictures[Math.floor(Math.random() * item.pictures.length)].url
+            }
+        });
+
         res.status(200).send(result);
     } catch (e) {
         console.log(e.message);
