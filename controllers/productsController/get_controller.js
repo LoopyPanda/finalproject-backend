@@ -90,23 +90,22 @@ const get_insta_pictures = async (req, res, next) => {
 // SELECT * FROM "Category_has_products" WHERE category_id=$1
 const get_picture_by_category = async (req, res, next) => {
     const { id } = req.params;
-    // console.log(req.params)
-    const getPicturesQueryByCategory = {
+//   console.log(req.params)
+    const getPicturesByCategory = {
         text: `SELECT c.name As category_name,
-        c.description As category_description,
-        c.thumbnail As category_thumbnail,
         c.price As category_price,
-        ARRAY_AGG(JSON_BUILD_OBJECT('stock', p.stock, 'name', p.name, 'description', p.description))
+        ARRAY_AGG(JSON_BUILD_OBJECT('name', p.name))
         FROM "Categories" c
         JOIN "Category_has_products" cp ON cp.category_id = c.category_id
         JOIN "Products" p ON cp.product_id = p.product_id
-        GROUP BY c.name, c.description, c.thumbnail, c.price;
+        JOIN "Images" i ON p.product_id = i.product_id
+        GROUP BY c.name,c.price;
         `,
         values: [id],
     };
     try {
-        const { rows: productRows } = await db.query(getPicturesQueryByCategory);
-
+        const { rows: productRows } = await db.query(getPicturesByCategory);
+        console.log(productRows)
         if (!productRows.length)
             return res
                 .status(404)
@@ -121,11 +120,10 @@ const get_picture_by_category = async (req, res, next) => {
 };
 
 const get_category_picture = async (req, res, next) => {
-    const { id } = req.params;
+    
     // console.log(id)
     const getcategorypicture = {
-        text: `SELECT * From "Categories" WHERE category_id=$1`,
-        values: [id],
+        text: `SELECT * From "Categories"`,
     };
     try {
         const { rows: productRows } = await db.query(getcategorypicture);

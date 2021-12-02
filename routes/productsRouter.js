@@ -17,8 +17,8 @@ productsRouter.get('/', function(req, res, next) {
 });
 
 productsRouter.get('/insta-pictures', get_insta_pictures);
-productsRouter.get('/category-pictures/:id', get_category_picture );
-productsRouter.get('/category-pictures/:id', get_picture_by_category );
+productsRouter.get('/category-pictures', get_category_picture );
+productsRouter.get('/picture-by-category/:id', get_picture_by_category );
 productsRouter.get('/random-pictures',  get_random_picture );
 productsRouter.get('/:id', get_one_product_by_id);
 
