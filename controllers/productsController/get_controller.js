@@ -88,19 +88,20 @@ const get_insta_pictures = async (req, res, next) => {
     res.json(data);
 };
 // SELECT * FROM "Category_has_products" WHERE category_id=$1
+//  JOIN "Products" p ON cp.product_id = p.product_id
 const get_picture_by_category = async (req, res, next) => {
     const { id } = req.params;
-    //   console.log(req.params)
+    console.log(id)
     const getPicturesByCategory = {
-        text: `SELECT c.name As category_name,
+        text: `SELECT 
+        c.name As category_name,
         c.price As category_price,
         ARRAY_AGG(JSON_BUILD_OBJECT('url', i.url))
         FROM "Categories" c
         JOIN "Category_has_products" cp ON cp.category_id = c.category_id
-        JOIN "Products" p ON cp.product_id = p.product_id
-        JOIN "Images" i ON p.product_id = i.product_id
-        WHERE c.category_id=$1
-        GROUP BY c.name,c.price;
+        JOIN "Images" i ON cp.product_id = i.product_id
+        WHERE c.category_id= $1
+        GROUP BY c.name,c.price
         `,
         values: [id],
     };
