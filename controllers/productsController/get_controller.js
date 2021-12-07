@@ -1,6 +1,6 @@
 const axios = require("axios");
 const db = require("../../db/client");
-const abhiInstaData = require("../../db/abhi_insta_data.json");
+const fetch = require('node-fetch')
 
 const get_one_product_by_id = async (req, res, next) => {
     const { id } = req.params;
@@ -57,14 +57,37 @@ const get_one_product_by_id = async (req, res, next) => {
 };
 
 const get_insta_pictures = async (req, res, next) => {
-    const getInstaData = async () => {
+    const response = await fetch("https://www.instagram.com/graphql/query/?query_hash=8c2a529969ee035a5063f2fc8602a0fd&variables=%7B%22id%22%3A%226356671502%22%2C%22first%22%3A12%2C%22after%22%3A%22QVFEVURuN1pQN0JMWWdFbjRNVWRRZnVTdURlVHdnd0xON2NXZGN5NjU2bkpjWnlLRDVaOGlyRkVJcGVlRDVlU01VOXhiUzFWOG5yd2tlcFgxOWpWWE5fcw%3D%3D%22%7D", {
+        "headers": {
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+            "accept-language": "fr,en-US;q=0.9,en;q=0.8,es;q=0.7,la;q=0.6,it;q=0.5,pt;q=0.4",
+            "cache-control": "max-age=0",
+            "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"96\", \"Google Chrome\";v=\"96\"",
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": "\"Android\"",
+            "sec-fetch-dest": "document",
+            "sec-fetch-mode": "navigate",
+            "sec-fetch-site": "none",
+            "sec-fetch-user": "?1",
+            "upgrade-insecure-requests": "1",
+            "cookie": process.env.INSTA_COOKIE
+        },
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": null,
+        "method": "GET"
+        });
+        
+        const instaData = await response.json()
+
+
+        const processInstaData = async (payload) => {
         const {
             data: {
                 user: {
                     edge_owner_to_timeline_media: { edges },
                 },
             },
-        } = abhiInstaData;
+        } = payload;
 
         const data = edges
             .filter(({ node }) => !node.is_video)
@@ -75,16 +98,10 @@ const get_insta_pictures = async (req, res, next) => {
                 };
             });
 
-        //   const queryHash = "8c2a529969ee035a5063f2fc8602a0fd";
-        //   const variables =
-        //     "%7B%22id%22%3A%226356671502%22%2C%22first%22%3A12%2C%22after%22%3A%22QVFEVURuN1pQN0JMWWdFbjRNVWRRZnVTdURlVHdnd0xON2NXZGN5NjU2bkpjWnlLRDVaOGlyRkVJcGVlRDVlU01VOXhiUzFWOG5yd2tlcFgxOWpWWE5fcw%3D%3D%22%7D";
-        //   const data = await axios.get(
-        //     `https://www.instagram.com/graphql/query/?query_hash=${queryHash}`
-        //   );
-
         return data;
     };
-    const data = await getInstaData();
+
+    const data = await processInstaData(instaData);
     res.json(data);
 };
 // SELECT * FROM "Category_has_products" WHERE category_id=$1
