@@ -96,7 +96,7 @@ const get_picture_by_category = async (req, res, next) => {
         text: `SELECT 
         c.name As category_name,
         c.price As category_price,
-        ARRAY_AGG(JSON_BUILD_OBJECT('url', i.url))
+        ARRAY_AGG(JSON_BUILD_OBJECT('url', i.url)) AS urls
         FROM "Categories" c
         JOIN "Category_has_products" cp ON cp.category_id = c.category_id
         JOIN "Images" i ON cp.product_id = i.product_id
